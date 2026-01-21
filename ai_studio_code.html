@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Journey | Happy Birthday</title>
+    
+    <!-- Fonts & Libraries -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-neon: #00f2ff;
+            --accent-pink: #ff007a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide real cursor for custom one */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus+Jakarta+Sans', sans-serif;
+            overflow: hidden; /* Prevent scroll until memory section */
+            height: 100vh;
+        }
+
+        /* --- Custom Magnetic Cursor --- */
+        #custom-cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* --- Global Layout --- */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .step {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Glassmorphism UI --- */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Typography & Neon --- */
+        .neon-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: white;
+            text-shadow: 0 0 10px var(--accent-neon), 0 0 20px var(--accent-neon);
+            margin-bottom: 1rem;
+        }
+
+        .sub-text {
+            font-size: 1.1rem;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- Interactive Elements --- */
+        .btn-magnetic {
+            margin-top: 2rem;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .btn-magnetic:hover {
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* --- Memory Lane Styles --- */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .photo-card {
+            aspect-ratio: 1;
+            background: #222;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--glass-border);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: 0.5s ease;
+        }
+
+        .photo-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        /* --- Audio Visualizer Placeholder --- */
+        .visualizer-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px;
+            margin-top: 1rem;
+        }
+
+        .bar {
+            width: 4px;
+            background: var(--accent-neon);
+            animation: bounce 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { height: 5px; }
+            to { height: 40px; }
+        }
+
+        /* --- Special Heart --- */
+        .heart {
+            font-size: 5rem;
+            color: var(--accent-pink);
+            filter: drop-shadow(0 0 15px var(--accent-pink));
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <div class="container">
+        
+        <!-- Step 1: The Invitation -->
+        <section id="step-1" class="step active">
+            <div class="glass-card">
+                <p class="sub-text">2025 Special Edition</p>
+                <h1 class="neon-text">A Story for You</h1>
+                <p>Please enter your world...</p>
+                <button class="btn-magnetic" onclick="nextStep(2)">Begin Journey</button>
+            </div>
+        </section>
+
+        <!-- Step 2: Cinematic Intro -->
+        <section id="step-2" class="step">
+            <h2 class="sub-text">Today is all about...</h2>
+            <!-- PERSONALIZATION START: Change Name Here -->
+            <h1 class="neon-text" id="birthday-name">Sarah</h1>
+            <p style="max-width: 400px; line-height: 1.6;">A journey through time, memories, and the beautiful light you bring into the world.</p>
+            <button class="btn-magnetic" onclick="nextStep(3)">Step Into Memories</button>
+        </section>
+
+        <!-- Step 3: Memory Lane (Personalized) -->
+        <section id="step-3" class="step">
+            <h2 class="sub-text">Our Favorite Moments</h2>
+            <div class="memory-grid" style="max-width: 800px;">
+                <!-- Replace 'src' with your actual image links -->
+                <div class="photo-card"><img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400" alt="Memory 1"></div>
+                <div class="photo-card"><img src="https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=400" alt="Memory 2"></div>
+                <div class="photo-card"><img src="https://images.unsplash.com/photo-1464347601390-25e2842a37f7?w=400" alt="Memory 3"></div>
+                <div class="photo-card"><img src="https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?w=400" alt="Memory 4"></div>
+            </div>
+            <button class="btn-magnetic" style="margin-top: 3rem;" onclick="nextStep(4)">The Message</button>
+        </section>
+
+        <!-- Step 4: Heartfelt Message -->
+        <section id="step-4" class="step">
+            <div class="glass-card">
+                <div class="heart">❤</div>
+                <h2 style="margin-bottom: 1rem;">To My Favorite Human</h2>
+                <p id="typewriter" style="font-size: 1.2rem; min-height: 100px; color: #ccc;"></p>
+                <button class="btn-magnetic" onclick="nextStep(5)">One Last Thing</button>
+            </div>
+        </section>
+
+        <!-- Step 5: Final Celebration -->
+        <section id="step-5" class="step">
+            <p class="sub-text">Finally...</p>
+            <h1 class="neon-text" style="font-size: 5rem;">Happy Birthday!</h1>
+            <div class="visualizer-container">
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <div class="bar" style="animation-delay: 0.6s"></div>
+            </div>
+            <p style="margin-top: 1rem; color: var(--accent-neon);">Celebrating You Today & Always.</p>
+            <button class="btn-magnetic" onclick="celebrate()">Replay Joy</button>
+        </section>
+
+    </div>
+
+    <script>
+        // --- Custom Cursor Logic ---
+        const cursor = document.querySelector('#custom-cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
+            gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
+        });
+
+        // Magnetic Effect for Buttons
+        document.querySelectorAll('.btn-magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.3 });
+                gsap.to(follower, { scale: 1.5, borderColor: '#00f2ff' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.3 });
+                gsap.to(follower, { scale: 1, borderColor: 'rgba(255, 255, 255, 0.3)' });
+            });
+        });
+
+        // --- Navigation Logic ---
+        let currentStep = 1;
+
+        function nextStep(stepNumber) {
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            const nextEl = document.getElementById(`step-${stepNumber}`);
+
+            gsap.to(currentEl, { opacity: 0, y: -20, duration: 0.5, onComplete: () => {
+                currentEl.classList.remove('active');
+                nextEl.classList.add('active');
+                gsap.fromTo(nextEl, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 });
+                
+                // Trigger specific step actions
+                if(
